@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="hero-banner text-center p-5 rounded">
+            <h1 class="display-4 mb-4">Find Your Perfect Recipe</h1>
+            <p class="lead mb-4">Search by ingredients or browse by category to discover delicious meals</p>
+
+            <div class="search-container">
+                <form action="{{ url_for('search') }}" method="get" class="recipe-search-form">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" name="search" placeholder="Search recipes..." value="{{ search_query }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-carrot"></i></span>
+                                <input type="text" class="form-control" name="ingredients" placeholder="Ingredients (comma separated)" value="{{ ingredients }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <select class="form-select" name="meal_type" aria-label="Select meal type">
+                                <option value="">Any Meal Type</option>
+                                {% for type in meal_types %}
+                                <option value="{{ type }}" {% if meal_type == type %}selected{% endif %}>{{ type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" name="cuisine" aria-label="Select cuisine type">
+                                <option value="">Any Cuisine</option>
+                                {% for c in cuisines %}
+                                <option value="{{ c }}" {% if cuisine == c %}selected{% endif %}>{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" name="diet" aria-label="Select diet preference">
+                                <option value="">Any Diet</option>
+                                {% for d in diets %}
+                                <option value="{{ d }}" {% if diet == d %}selected{% endif %}>{{ d }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg mt-3 px-4 search-btn">
+                        <i class="fas fa-search me-2"></i> Find Recipes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if search_query or meal_type or cuisine or diet or ingredients %}
+<div class="active-filters mb-4">
+    <div class="d-flex flex-wrap align-items-center">
+        <span class="me-2">Active filters:</span>
+        {% if search_query %}
+        <span class="badge bg-primary rounded-pill me-2 mb-2">
+            Search: {{ search_query }}
+            <a href="{{ url_for('search', meal_type=meal_type, cuisine=cuisine, diet=diet, ingredients=ingredients) }}" class="text-white ms-1" title="Remove search filter"><i class="fas fa-times"></i></a>
+        </span>
+        {% endif %}
+        {% if meal_type %}
+        <span class="badge bg-primary rounded-pill me-2 mb-2">
+            Meal: {{ meal_type }}
+            <a href="{{ url_for('search', search=search_query, cuisine=cuisine, diet=diet, ingredients=ingredients) }}" class="text-white ms-1" title="Remove meal filter"><i class="fas fa-times"></i></a>
+        </span>
+        {% endif %}
+        {% if cuisine %}
+        <span class="badge bg-primary rounded-pill me-2 mb-2">
+            Cuisine: {{ cuisine }}
+            <a href="{{ url_for('search', search=search_query, meal_type=meal_type, diet=diet, ingredients=ingredients) }}" class="text-white ms-1" title="Remove cuisine filter"><i class="fas fa-times"></i></a>
+        </span>
+        {% endif %}
+        {% if diet %}
+        <span class="badge bg-primary rounded-pill me-2 mb-2">
+            Diet: {{ diet }}
+            <a href="{{ url_for('search', search=search_query, meal_type=meal_type, cuisine=cuisine, ingredients=ingredients) }}" class="text-white ms-1" title="Remove diet filter"><i class="fas fa-times"></i></a>
+        </span>
+        {% endif %}
+        {% if ingredients %}
+        <span class="badge bg-primary rounded-pill me-2 mb-2">
+            Ingredients: {{ ingredients }}
+            <a href="{{ url_for('search', search=search_query, meal_type=meal_type, cuisine=cuisine, diet=diet) }}" class="text-white ms-1" title="Remove ingredients filter"><i class="fas fa-times"></i></a>
+        </span>
+        {% endif %}
+        <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary mb-2" title="Clear all filters">Clear All</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    {% if recipes %}
+        {% for recipe in recipes %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 recipe-card">
+                {% if recipe.image %}
+                <div class="recipe-card-img-container" style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img src="{{ recipe.image }}" class="card-img-top recipe-card-img" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ recipe.name }}">
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ recipe.name }}</h5>
+                    <p class="card-text fw-medium">{{ recipe.description }}</p>
+                </div>
+                <div class="card-footer bg-transparent d-flex justify-content-between">
+                    <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" class="btn btn-outline-primary fw-bold" title="View recipe details">View Recipe</a>
+                    <button class="btn btn-outline-danger favorite-btn" data-recipe-id="{{ recipe.id }}" onclick="toggleFavorite('{{ recipe.id }}')" type="button" title="Add to favorites">
+                        {% if recipe.id in session.get('favorites', []) %}
+                        <i class="fas fa-heart"></i>
+                        {% else %}
+                        <i class="far fa-heart"></i>
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> No recipes found matching your criteria. Try adjusting your search.
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

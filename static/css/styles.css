@@ -1,0 +1,220 @@
+/* Updated Color Scheme for Better Dark Mode */
+:root {
+    --primary-color: #ff4757;  /* Slightly deeper red */
+    --secondary-color: #1e90ff; /* Bright blue for contrast */
+    --accent-color: #ffcc00;    /* Vibrant yellow accent */
+    --text-color: #e0e0e0;      /* Softer white for better readability */
+    --light-color: #f8f9fa;
+    --dark-color: #121212;      /* Deep black for a more elegant dark mode */
+    --bs-body-color: var(--text-color);
+}
+
+/* General Styles */
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--dark-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+}
+
+/* Text Visibility Enhancements */
+.card {
+    background: #1c1c1c; /* Dark gray instead of black */
+    color: var(--text-color);
+    border-radius: 10px;
+}
+
+.card-title {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.card-text {
+    color: #d6d6d6;
+}
+
+.list-group-item {
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+.instruction-list li {
+    font-weight: 500;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    color: var(--light-color);
+}
+
+.badge {
+    font-weight: bold;
+    background-color: var(--secondary-color);
+}
+
+/* Navbar */
+.navbar {
+    background-color: #222; /* Slightly lighter than body */
+}
+
+/* Hero Banner */
+.hero-banner {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://source.unsplash.com/random/1200x800/?food,cooking') 
+                center/cover no-repeat;
+    color: white;
+    border-radius: 10px;
+    padding: 3rem !important;
+    margin-bottom: 2rem;
+}
+
+/* Search Button */
+.search-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    min-width: 180px;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+}
+
+/* Recipe Cards */
+.recipe-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1b1b1b;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(255, 71, 87, 0.4);
+}
+
+.recipe-card-img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+    transition: transform 0.5s ease;
+}
+
+.recipe-card:hover .recipe-card-img {
+    transform: scale(1.08);
+}
+
+.recipe-card-img-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    padding: 10px;
+}
+
+/* Recipe Tags */
+.recipe-tags .badge {
+    margin-right: 5px;
+    font-weight: 600;
+    padding: 5px 10px;
+    background-color: var(--accent-color);
+    color: black;
+}
+
+/* Recipe Details */
+.recipe-detail .card {
+    background: #181818;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.recipe-detail .card-header {
+    border-radius: 10px 10px 0 0;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Video Styling */
+.recipe-video-container {
+    margin-bottom: 30px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 15px rgba(255, 204, 0, 0.2);
+}
+
+.ratio-16x9 iframe {
+    border: none;
+    border-radius: 0 0 10px 10px;
+}
+
+/* Favorite Button */
+.favorite-btn {
+    background: #ff4757;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+    background: #ff2e50;
+    box-shadow: 0 4px 10px rgba(255, 47, 80, 0.5);
+}
+
+.favorite-btn .fas.fa-heart {
+    color: white;
+}
+
+.favorite-btn:hover .fas.fa-heart {
+    color: #ffcc00;
+}
+
+/* Active Filters */
+.active-filters .badge {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    background: var(--secondary-color);
+    color: white;
+}
+
+/* Favorites Page */
+.favorites-page .alert {
+    background: #1e1e1e;
+    color: var(--text-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Footer */
+footer {
+    background: #181818;
+    margin-top: auto;
+    padding: 1rem;
+}
+
+.footer-links a {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.footer-links a:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+    color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-banner {
+        padding: 2rem !important;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+}

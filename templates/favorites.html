@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}My Favorites{% endblock %}
+
+{% block content %}
+<div class="favorites-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-heart text-danger me-2"></i> My Favorite Recipes</h1>
+    </div>
+
+    <div class="row">
+        {% if recipes %}
+            {% for recipe in recipes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 recipe-card">
+                    <div class="card-body">
+                        <div class="recipe-tags mb-2">
+                            {% if recipe.mealType %}
+                            <span class="badge bg-info text-dark">{{ recipe.mealType }}</span>
+                            {% endif %}
+                            {% if recipe.cuisine %}
+                            <span class="badge bg-warning text-dark">{{ recipe.cuisine }}</span>
+                            {% endif %}
+                            {% if recipe.diets %}
+                                {% for diet in recipe.diets %}
+                                <span class="badge bg-success">{{ diet }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title">{{ recipe.name }}</h5>
+                        <p class="card-text">{{ recipe.description }}</p>
+                        <div class="recipe-details d-flex justify-content-between mt-3">
+                            <div>
+                                <i class="far fa-clock me-1"></i> 
+                                {{ recipe.prepTime or "N/A" }} + {{ recipe.cookTime or "N/A" }}
+                            </div>
+                            <div><i class="fas fa-utensils me-1"></i> {{ recipe.difficulty }}</div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between">
+                        <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" class="btn btn-outline-primary">View Recipe</a>
+                        <button class="btn btn-outline-danger favorite-btn" data-recipe-id="{{ recipe.id | string }}" 
+                            onclick="toggleFavorite('{{ recipe.id | string }}')" 
+                            aria-label="Remove {{ recipe.name }} from favorites">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <div class="text-center py-5">
+                    <i class="far fa-heart fa-3x mb-3"></i>
+                    <h4>No favorite recipes yet</h4>
+                    <p>Browse recipes and click the heart icon to add them to your favorites!</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary mt-2">
+                        <i class="fas fa-search me-1"></i> Find Recipes
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- JavaScript to Handle Favorite Toggling -->
+<script>
+function toggleFavorite(recipeId) {
+    fetch(`/toggle_favorite/${recipeId}`, {
+        method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            location.reload();  // Reload the page to update favorites
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+</script>
+
+{% endblock %}

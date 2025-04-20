@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}{{ recipe.name }}{% endblock %}
+
+{% block content %}
+<div class="recipe-detail">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('search', meal_type=recipe.mealType) }}">
+                            {{ recipe.mealType }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ recipe.name }}</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-5 fw-bold">{{ recipe.name }}</h1>
+                <form id="favorite-form-{{ recipe.id }}" action="{{ url_for('toggle_favorite', recipe_id=recipe.id) }}" method="post">
+                    <button type="button" class="btn btn-outline-danger" onclick="toggleFavorite('{{ recipe.id }}')">
+                        {% if is_favorite %}
+                        <i class="fas fa-heart"></i> Remove from Favorites
+                        {% else %}
+                        <i class="far fa-heart"></i> Add to Favorites
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+
+            {% if recipe.image %}
+            <div class="text-center mt-3 mb-4">
+                <img src="{{ recipe.image }}" alt="{{ recipe.name }}" class="img-fluid rounded shadow" style="max-width: 400px;">
+            </div>
+            {% endif %}
+
+            <div class="recipe-tags my-3">
+                {% if recipe.mealType %}
+                <span class="badge bg-info">{{ recipe.mealType }}</span>
+                {% endif %}
+                {% if recipe.cuisine %}
+                <span class="badge bg-warning">{{ recipe.cuisine }}</span>
+                {% endif %}
+                {% for diet in recipe.diets %}
+                <span class="badge bg-success">{{ diet }}</span>
+                {% endfor %}
+                <span class="badge bg-secondary"><i class="fas fa-clock"></i> Prep: {{ recipe.prepTime }}</span>
+                <span class="badge bg-secondary"><i class="fas fa-fire"></i> Cook: {{ recipe.cookTime }}</span>
+                <span class="badge bg-secondary"><i class="fas fa-users"></i> Serves: {{ recipe.servings }}</span>
+                <span class="badge bg-secondary"><i class="fas fa-chart-line"></i> {{ recipe.difficulty }}</span>
+            </div>
+
+            <p class="lead fw-bold">{{ recipe.description }}</p>
+            <hr>
+        </div>
+    </div>
+
+    {% if recipe.video %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0"><i class="fas fa-video"></i> Watch How to Make It</h3>
+                </div>
+                <div class="card-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="{{ recipe.video }}" title="{{ recipe.name }} tutorial" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0"><i class="fas fa-shopping-basket"></i> Ingredients</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for ingredient in recipe.ingredients %}
+                        <li class="list-group-item"><i class="fas fa-check text-success"></i> {{ ingredient }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0"><i class="fas fa-list-ol"></i> Instructions</h3>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        {% for instruction in recipe.instructions if instruction.strip() %}
+                        <li class="mb-3">{{ instruction }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="similar-recipes mt-5">
+        <h3>You Might Also Like</h3>
+        <div class="row mt-3">
+            {% set count = namespace(value=0) %}
+            {% for other_recipe in recipes %}
+                {% if other_recipe.id != recipe.id and (other_recipe.cuisine == recipe.cuisine or other_recipe.mealType == recipe.mealType) and count.value < 3 %}
+                    {% set count.value = count.value + 1 %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <span class="badge bg-info">{{ other_recipe.mealType }}</span>
+                                <span class="badge bg-warning">{{ other_recipe.cuisine }}</span>
+                                <h5>{{ other_recipe.name }}</h5>
+                                <p class="small">{{ other_recipe.description[:100] }}{% if other_recipe.description|length > 100 %}...{% endif %}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('recipe_detail', recipe_id=other_recipe.id) }}" class="btn btn-outline-primary btn-sm">View Recipe</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if count.value == 0 %}
+            <p class="text-muted">No similar recipes found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
